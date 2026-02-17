@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import API from "../api";
 import { Link } from "react-router-dom";
 
-
 function IncidentList() {
   const [incidents, setIncidents] = useState([]);
   const [page, setPage] = useState(1);
@@ -15,7 +14,7 @@ function IncidentList() {
   const [sortBy, setSortBy] = useState("createdAt");
   const [order, setOrder] = useState("desc");
 
-  // Sorting
+  // Sorting handler
   const handleSort = (field) => {
     if (sortBy === field) {
       setOrder(order === "asc" ? "desc" : "asc");
@@ -34,43 +33,43 @@ function IncidentList() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Reset page when filters change
+  // Reset page when filters/search change
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, severity, status]);
 
-  // Fetch data
+  // Fetch data (moved inside useEffect to fix ESLint warning)
   useEffect(() => {
+    const fetchIncidents = async () => {
+      try {
+        setLoading(true);
+
+        const res = await API.get("/incidents", {
+          params: {
+            page,
+            limit: 10,
+            search: debouncedSearch,
+            severity,
+            status,
+            sortBy,
+            order,
+          },
+        });
+
+        setIncidents(res.data.incidents || []);
+        setTotalPages(res.data.totalPages || 1);
+      } catch (err) {
+        console.error("Error fetching incidents:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchIncidents();
   }, [page, debouncedSearch, severity, status, sortBy, order]);
 
-  const fetchIncidents = async () => {
-    try {
-      setLoading(true);
-
-      const res = await API.get("/incidents", {
-        params: {
-          page,
-          limit: 10,
-          search: debouncedSearch,
-          severity,
-          status,
-          sortBy,
-          order,
-        },
-      });
-
-      setIncidents(res.data.incidents || []);
-      setTotalPages(res.data.totalPages || 1);
-    } catch (err) {
-      console.log("Error fetching incidents:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="container">
       {/* Top Bar */}
       <div className="top-bar">
         <h2>Incident Tracker</h2>
@@ -78,8 +77,6 @@ function IncidentList() {
           <button>Create Incident</button>
         </Link>
       </div>
-
-      <br />
 
       {/* Filters */}
       <div className="filters">
@@ -90,10 +87,7 @@ function IncidentList() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select
-          value={severity}
-          onChange={(e) => setSeverity(e.target.value)}
-        >
+        <select value={severity} onChange={(e) => setSeverity(e.target.value)}>
           <option value="">All Severities</option>
           <option value="SEV1">SEV1</option>
           <option value="SEV2">SEV2</option>
@@ -101,10 +95,7 @@ function IncidentList() {
           <option value="SEV4">SEV4</option>
         </select>
 
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
+        <select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">All Status</option>
           <option value="OPEN">OPEN</option>
           <option value="MITIGATED">MITIGATED</option>
@@ -112,13 +103,11 @@ function IncidentList() {
         </select>
       </div>
 
-      <br />
-
       {/* Table */}
       {loading ? (
-        <p>Loading...</p>
+        <p style={{ textAlign: "center" }}>Loading...</p>
       ) : (
-        <table border="1" cellPadding="10">
+        <table>
           <thead>
             <tr>
               <th onClick={() => handleSort("title")}>Title</th>
@@ -137,32 +126,30 @@ function IncidentList() {
                   <td>{inc.title}</td>
                   <td>{inc.service}</td>
 
-                  {/* Severity Badge */}
                   <td>
                     <span className={`badge severity-${inc.severity}`}>
                       {inc.severity}
                     </span>
                   </td>
 
-                  {/* Status Badge */}
                   <td>
                     <span className={`badge status-${inc.status}`}>
                       {inc.status}
                     </span>
                   </td>
 
-                  <td>{inc.owner}</td>
+                  <td>{inc.owner || "-"}</td>
 
                   <td>
-                    <Link to={`/incident/${inc._id}`}>
-                      View
-                    </Link>
+                    <Link to={`/incident/${inc._id}`}>View</Link>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6">No incidents found</td>
+                <td colSpan="6" style={{ textAlign: "center" }}>
+                  No incidents found
+                </td>
               </tr>
             )}
           </tbody>
@@ -171,10 +158,7 @@ function IncidentList() {
 
       {/* Pagination */}
       <div style={{ marginTop: "20px", textAlign: "center" }}>
-        <button
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-        >
+        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
           Prev
         </button>
 

@@ -94,16 +94,10 @@ th, td {
 
 /* Status Colors */
 .status-OPEN { 
-  background-color: #ef4444;
+  background-color: #0d1370;
   animation: blink 1.2s infinite;
 }
 
 .status-MITIGATED { background-color: #3b82f6; }
 .status-RESOLVED { background-color: #10b981; }
 
-/* Blinking effect for OPEN */
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
