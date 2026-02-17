@@ -1,4 +1,4 @@
-Incident Tracker – Full Stack MERN Application
+🚨 Incident Tracker – MERN Stack Application
 📌 Overview
 
 This is a full-stack Incident Tracker application built using the MERN stack (MongoDB, Express.js, React, Node.js).
@@ -19,9 +19,18 @@ View incident details
 
 Update incident status and metadata
 
-The application is designed with a focus on scalability, clean architecture, and proper API design.
+The system is designed with scalability, clean architecture, and proper REST API design principles in mind.
 
 🏗 Tech Stack
+Backend
+
+Node.js
+
+Express.js
+
+MongoDB Atlas
+
+Mongoose
 
 Frontend
 
@@ -31,27 +40,19 @@ Axios
 
 React Router
 
-Backend
-
-Node.js
-
-Express.js
-
-MongoDB
-
-Mongoose
+Custom CSS
 
 🚀 Setup Instructions
-1️⃣ Clone the Repository
-git clone <your-github-link>
-cd incident-tracker
+1️⃣ Clone Repository
+git clone https://github.com/MuthuKiran28/incident-tracker-mern.git
+cd incident-tracker-mern
 
 2️⃣ Backend Setup
 cd backend
 npm install
 
 
-Create a .env file:
+Create a .env file inside backend:
 
 MONGO_URI=your_mongodb_connection_string
 PORT=5000
@@ -65,7 +66,7 @@ npm run dev
 node seed.js
 
 
-This will generate 200 sample incidents.
+This will generate 200 realistic incidents with mixed severity and status values.
 
 4️⃣ Frontend Setup
 cd ../frontend
@@ -73,7 +74,7 @@ npm install
 npm start
 
 
-App runs at:
+Application runs at:
 
 http://localhost:3000
 
@@ -84,19 +85,17 @@ Create a new incident.
 
 GET /api/incidents
 
-Fetch paginated incidents.
-
-Query parameters:
+Supports:
 
 page
 
 limit
 
+search
+
 severity
 
 status
-
-search
 
 sortBy
 
@@ -111,29 +110,14 @@ PATCH /api/incidents/:id
 Update incident details.
 
 🧠 Design Decisions
-1. Server-Side Pagination
 
-Pagination logic is handled on the backend to support scalability for large datasets.
+Server-side pagination implemented for scalability and performance.
 
-2. Server-Side Filtering and Sorting
+Filtering and sorting handled at database level to reduce client load.
 
-Filtering and sorting are implemented at database query level using MongoDB queries for performance efficiency.
+MongoDB indexes added for severity, status, and text search.
 
-3. Indexing
-
-Indexes were added on:
-
-severity
-
-status
-
-text search (title and summary)
-
-This improves query performance for filtering and search operations.
-
-4. Separation of Concerns
-
-The backend follows a layered structure:
+Backend follows layered architecture:
 
 Models
 
@@ -143,28 +127,32 @@ Routes
 
 Database configuration
 
-This ensures maintainability and scalability.
+Clear separation between frontend and backend.
 
 ⚖ Trade-offs
 
-Authentication was not implemented to keep focus on core functionality.
+Authentication not implemented to focus on core requirements.
 
-UI is minimalistic to prioritize backend correctness and performance.
+UI kept minimal to prioritize backend correctness.
 
-No unit testing added due to time constraints.
+Automated tests not included due to time constraints.
 
 🚀 Improvements With More Time
 
-Add authentication and role-based access
+Add authentication and role-based access control
 
-Add proper error handling middleware
+Add validation middleware (Joi/Zod)
 
-Add request validation using Joi or Zod
+Add unit and integration testing
 
-Add unit and integration tests
+Add Docker configuration
 
-Add Docker support
+Improve UI using a component library
 
-Improve UI styling with Tailwind or Material UI
+Add dashboard metrics (incident counts by status/severity)
 
-Add caching layer (Redis)
+📦 Repository Structure
+incident-tracker-mern/
+ ├── backend/
+ ├── frontend/
+ ├── README.md
